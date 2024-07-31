@@ -38,7 +38,7 @@ async function fetchBooks(...fetchFns) {
 			return bookSet;
 		};
 		const addBook = (bookSet, apiId, title, pages) => {
-			bookSet.books.push({ apiId, title, slug: strToSlug(title), pages });
+			bookSet.books.push({ apiId, title, slug: `${strToSlug(title)}-${apiId}`, pages });
 			console.info(
 				`${prefix} [${bookSet.name}] Added ${title} (ID ${apiId})`
 			);
