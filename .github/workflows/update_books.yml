@@ -1,0 +1,37 @@
+name: Update Books
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 1 * *' # run monthly
+
+permissions:
+  contents: write
+
+jobs:
+  update-books:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: api
+          sparse-checkout: fetch.js
+          sparse-checkout-cone-mode: false
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Run fetch.js script
+        env:
+          HANHTRANGSO_EMAIL: demo@gmail.com
+          HANHTRANGSO_PASSWORD: 12345678Aa@
+        run: node fetch.js
+      - name: Push updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git sparse-checkout disable
+          git add .
+          git commit -m "update books" || true
+          git push
