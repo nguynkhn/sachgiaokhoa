@@ -166,10 +166,11 @@ function generateBooks(bookSets) {
 		);
 	});
 
+	const lastUpdated = new Date;
 	writeP(
 		path.join(dir, 'booksets'),
 		JSON.stringify(
-			bookSets,
+			{ lastUpdated, bookSets },
 			// ignore `books`
 			(key, value) => key == 'books' ? undefined : value,
 		),
