@@ -17,7 +17,7 @@ jobs:
         with:
           ref: api
       - name: Clean everything up
-        run: grep -oP 'VERSION\s*=\s*\K\d+' fetch.js | xargs -I{} rm -rfv v{}/*
+        run: grep -oP 'VERSION\s*=\s*\K\d+' fetch.js | xargs -I{} rm -rfv v{}/
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
