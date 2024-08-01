@@ -16,8 +16,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: api
-          sparse-checkout: fetch.js
-          sparse-checkout-cone-mode: false
+      - name: Clean everything up
+        run: grep -oP 'VERSION\s*=\s*\K\d+' fetch.js | xargs -I{} rm -rfv v{}/*
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -31,7 +31,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git sparse-checkout disable
           git add .
           git commit -m "update books" || true
           git push
