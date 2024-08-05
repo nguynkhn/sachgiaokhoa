@@ -78,9 +78,9 @@ const Hoc10Fetch = async ({ addBookSet, addBook }) => {
     }
 
     addBook(
-      bookSet, id, title, thumb.replace('E_Learning/', ''),
+      bookSet, id, title, thumb.slice('E_Learning/'.length),
       list_page.map(
-        ({ background }) => background.replace('E_Learning/page_public/', ''),
+        ({ background }) => background.slice('E_Learning/page_public/'.length),
       ),
     );
   }
@@ -136,7 +136,7 @@ const HanhTrangSoFetch = async ({ addBookSet, addBook }) => {
         }
 
         addBook(
-          bookSet, bookId, name, imageUrl,
+          bookSet, bookId, name, imageUrl.slice('uploads/'.length),
           [...Array(totalPage).keys()].map(
             index => `${fileName}-${index + 1}.jpg`,
           ),
