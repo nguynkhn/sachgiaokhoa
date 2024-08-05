@@ -30,15 +30,18 @@ async function fetchBooks(...fetchFns) {
   for (const fetchFn of fetchFns) {
     const prefix = `[${fetchFn.name}]`;
 
-    const addBookSet = (apiId, name, apiUrl, cdnUrl) => {
-      const bookSet = {  apiId, name, slug: shortenStr(name), apiUrl, cdnUrl, books: [],
+    const addBookSet = (apiId, name, apiUrl, thumbUrl, pageUrl) => {
+      const bookSet = {
+        apiId, name, slug: shortenStr(name), apiUrl, thumbUrl, pageUrl, books: [],
       };
       bookSets.push(bookSet);
       console.info(`${prefix} Added ${name} (ID ${apiId})`);
       return bookSet;
     };
-    const addBook = (bookSet, apiId, title, pages) => {
-      bookSet.books.push({ apiId, title, slug: `${strToSlug(title)}-${apiId}`, pages });
+    const addBook = (bookSet, apiId, title, thumb, pages) => {
+      bookSet.books.push({
+        apiId, title, slug: `${strToSlug(title)}-${apiId}`, thumb, pages
+      });
       console.info(
         `${prefix} [${bookSet.name}] Added ${title} (ID ${apiId})`
       );
@@ -61,20 +64,21 @@ const Hoc10Fetch = async ({ addBookSet, addBook }) => {
     null,
     'Cánh diều',
     apiUrl,
+    'https://hoc10.monkeyuni.net/E_Learning',
     'https://hoc10.monkeyuni.net/E_Learning/page_public',
   );
 
   const bookList
     = await _request(`${apiUrl}/list-book?book_type_id=${bookTypeIds}`);
   for (const { id, title } of bookList.list_book) {
-    const { list_page }
+    const { thumb, list_page }
       = await _request(`${apiUrl}/get-detail-page?book_id=${id}`);
     if (!list_page) {
       continue;
     }
 
     addBook(
-      bookSet, id, title,
+      bookSet, id, title, thumb.replace('E_Learning/', ''),
       list_page.map(
         ({ background }) => background.replace('E_Learning/page_public/', ''),
       ),
@@ -118,20 +122,21 @@ const HanhTrangSoFetch = async ({ addBookSet, addBook }) => {
       bookTypeId,
       name.trim(),
       apiUrl,
+      'https://cdnelearning.nxbgd.vn/uploads',
       'https://cdnelearning.nxbgd.vn/uploads/books',
     );
 
     for (const { books } of bookGroups) {
       for (const { bookId, name } of books) {
         await checkLogin();
-        const { totalPage, fileName }
+        const { imageUrl, totalPage, fileName }
           = await _request(`${apiUrl}/book/${bookId}`, 'GET', headers);
         if (!fileName) {
           continue;
         }
 
         addBook(
-          bookSet, bookId, name,
+          bookSet, bookId, name, imageUrl,
           [...Array(totalPage).keys()].map(
             index => `${fileName}-${index + 1}.jpg`,
           ),
@@ -160,8 +165,8 @@ function generateBooks(bookSets) {
         writeP(path.join(bookSetDir, book.slug), JSON.stringify(book));
 
         // simplify by taking the essentials
-        const { title, slug, pages } = book;
-        return { title, slug, thumb: pages[0], pageCount: pages.length };
+        const { title, slug, thumb, pages } = book;
+        return { title, slug, thumb, pageCount: pages.length };
       })),
     );
   });
