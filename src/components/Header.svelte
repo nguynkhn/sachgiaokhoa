@@ -3,8 +3,8 @@
 </script>
 
 <style>
-  .header {
-    @apply px-4 py-2 space-x-4 w-full min-h-12 flex justify-between
+  :global(.header) {
+    @apply px-4 py-2 top-0 sticky space-x-4 w-full min-h-12 flex justify-between
       items-center bg-zinc-100 dark:bg-neutral-900 shadow-md;
   }
 

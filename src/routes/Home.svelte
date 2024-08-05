@@ -9,17 +9,21 @@
   import BookGrid from '../components/BookGrid.svelte';
   import Error from '../components/Error.svelte';
 
-  const bookSets = writable();
+  const bookSets = writable([]);
   const bookSet = writable();
+  const bookList = writable([]);
+  const searchBooks = writable([]);
   setContext('bookSets', bookSets);
   setContext('bookSet', bookSet);
+  setContext('bookList', bookList);
+  setContext('searchBooks', searchBooks);
 
   let lastUpdated;
-  const promise = getBookSets()
+  const promise = () => getBookSets()
     .then(data => ({ lastUpdated, bookSets: $bookSets } = data));
 </script>
 
-{#await promise}
+{#await promise()}
   <Spinner />
 {:then}
   <p>

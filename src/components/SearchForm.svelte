@@ -1,12 +1,26 @@
 <script>
   import { getContext } from 'svelte';
+  import Fuse from 'fuse.js';
 
   const bookSets = getContext('bookSets');
   const bookSet = getContext('bookSet');
-  let selectedBookSet = -1;
-  $: selectedBookSet != -1 && ($bookSet = $bookSets[selectedBookSet]);
+  const bookList = getContext('bookList');
+  const searchBooks = getContext('searchBooks');
 
-  let searchBook;
+  let selectedBookSet = -1;
+  let searchInput = '';
+  $: selectedBookSet != -1
+    && ($bookSet = $bookSets[selectedBookSet]);
+
+  const fuse = new Fuse([], { keys: ['title'] });
+  // load book list
+  $: $bookList && fuse.setCollection($bookList);
+
+  // search if there is input
+  $: $bookSet && ($searchBooks = searchInput != ''
+      ? fuse.search(searchInput)
+        .map(result => result.item)
+      : $bookList);
 </script>
 
 <style>
@@ -27,13 +41,13 @@
   }
 </style>
 
-<form class="search_form">
+<form class="search_form" on:submit|preventDefault>
   <select class="search_form_select" bind:value={selectedBookSet}>
     <option value={-1} hidden>Bộ sách</option>
     {#each $bookSets as bookSet, i}
       <option value={i}>{bookSet.name}</option>
     {/each}
   </select>
-  <input class="search_form_input" bind:value={searchBook} disabled
-    placeholder="Tìm kiếm sách theo tên (sắp có)...">
+  <input class="search_form_input" bind:value={searchInput}
+    placeholder="Tìm kiếm sách theo tên...">
 </form>

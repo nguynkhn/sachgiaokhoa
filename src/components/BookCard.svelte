@@ -9,8 +9,8 @@
   const bookSet = getContext('bookSet');
 
   const lazyLoad = (node) => {
-    const observer = new IntersectionObserver((entries) => {
-      if (!entries[0].isIntersecting) {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting || book.thumb.length == 0) {
         return;
       }
       const thumb = encodeURI(`${$bookSet.thumbUrl}/${book.thumb}`);
@@ -47,12 +47,13 @@
     FileSaver.saveAs(zip, `${slug}.zip`);
     ok = true;
   };
+  // TODO: downloading queue with progression
 
 </script>
 
 <style>
   .book_card {
-    @apply m-auto p-2 w-36 h-72 flex flex-col space-y-2 rounded shadow-lg
+    @apply p-2 w-36 h-72 flex flex-col space-y-2 rounded shadow-lg
       bg-slate-50 dark:bg-slate-800;
   }
 
