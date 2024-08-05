@@ -138,7 +138,7 @@ const HanhTrangSoFetch = async ({ addBookSet, addBook }) => {
         addBook(
           bookSet, bookId, name,
           // they don't have a full size thumbnail lol
-          imageUrl.slice('uploads/'.length).replace('.png', '_size_285_404.png'),
+          imageUrl.slice('uploads/'.length).replace('.jpg', '_size_285_404.jpg'),
           [...Array(totalPage).keys()].map(
             index => `${fileName}-${index + 1}.jpg`,
           ),
